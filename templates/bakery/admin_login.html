@@ -1,0 +1,51 @@
+{% extends 'bakery/base.html' %}
+{% load static %}
+
+{% block title %}Bakery Staff Login — Twinklebell Confectionaries{% endblock %}
+
+{% block content %}
+<div class="py-20 bg-gradient-to-b from-bakery-peach/40 via-bakery-cream to-white min-h-[80vh] flex items-center justify-center">
+    <div class="max-w-md w-full mx-auto px-4">
+        
+        <div class="bg-white rounded-3xl p-8 sm:p-10 shadow-2xl border border-bakery-peach space-y-6">
+            
+            <div class="text-center space-y-2">
+                <img src="{% static 'images/logo.png' %}" alt="Twinklebell" class="h-16 w-auto mx-auto object-contain">
+                <span class="px-3 py-1 rounded-full bg-bakery-peach text-bakery-rose-dark font-accent text-xs font-bold uppercase tracking-wider inline-block">
+                    Staff Portal
+                </span>
+                <h1 class="font-heading text-2xl font-bold text-bakery-dark">
+                    Bakery Admin Login
+                </h1>
+                <p class="text-xs text-bakery-dark/60">
+                    Sign in to manage cake orders, update live baking stages, and oversee dispatch.
+                </p>
+            </div>
+
+            <form method="POST" class="space-y-4">
+                {% csrf_token %}
+                <div>
+                    <label class="block text-xs font-bold text-bakery-dark uppercase tracking-wider mb-1.5">Username</label>
+                    <input type="text" name="username" required placeholder="admin" class="w-full px-4 py-3 rounded-xl bg-bakery-cream border border-bakery-peach focus:border-bakery-rose focus:ring-1 focus:ring-bakery-rose outline-none text-sm font-semibold text-bakery-dark">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-bakery-dark uppercase tracking-wider mb-1.5">Password</label>
+                    <input type="password" name="password" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl bg-bakery-cream border border-bakery-peach focus:border-bakery-rose focus:ring-1 focus:ring-bakery-rose outline-none text-sm font-semibold text-bakery-dark">
+                </div>
+
+                <button type="submit" class="w-full py-3.5 rounded-xl bg-bakery-dark hover:bg-bakery-rose text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:shadow-xl transition-all">
+                    Sign In to Dashboard
+                </button>
+            </form>
+
+            <div class="text-center text-[11px] text-bakery-dark/50 pt-2 border-t border-bakery-peach">
+                Default Staff Account: <strong>admin</strong> / <strong>admin12345</strong>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+

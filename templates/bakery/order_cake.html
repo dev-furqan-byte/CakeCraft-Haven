@@ -1,0 +1,331 @@
+{% extends 'bakery/base.html' %}
+{% load static %}
+
+{% block title %}Order {{ product.name }} — Twinklebell Confectionaries{% endblock %}
+
+{% block content %}
+<div class="py-12 bg-gradient-to-b from-bakery-peach/30 via-bakery-cream to-white min-h-screen">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Breadcrumb / Back button -->
+        <div class="mb-6">
+            <a href="{% url 'index' %}#products" class="inline-flex items-center gap-2 text-sm font-bold text-bakery-dark/70 hover:text-bakery-rose transition-colors">
+                <i class="fa-solid fa-arrow-left text-xs"></i>
+                <span>Back to Cakes</span>
+            </a>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-xl border border-bakery-peach/80 overflow-hidden">
+            
+            <!-- Top Product Summary Banner -->
+            <div class="bg-gradient-to-r from-bakery-peach to-[#FEEAE4] p-6 sm:p-8 border-b border-bakery-peach/60 flex flex-col sm:flex-row items-center gap-6">
+                <img src="{{ product.get_image_url }}" alt="{{ product.name }}" class="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl object-cover shadow-md border-2 border-white flex-shrink-0">
+                <div class="text-center sm:text-left flex-1">
+                    <span class="px-3 py-1 rounded-full bg-white/80 text-bakery-dark font-accent text-xs font-bold uppercase tracking-wider">
+                        {{ product.category.name }}
+                    </span>
+                    <h1 class="font-heading text-2xl sm:text-3xl font-bold text-bakery-dark mt-2">
+                        {{ product.name }}
+                    </h1>
+                    <p class="text-xs sm:text-sm text-bakery-dark/75 mt-1 max-w-xl">
+                        {{ product.description }}
+                    </p>
+                    <div class="mt-3 flex items-center justify-center sm:justify-start gap-3">
+                        <span class="text-xs font-bold text-bakery-dark/60 uppercase">Base Price:</span>
+                        <strong class="font-heading text-2xl text-bakery-rose-dark" id="displayBasePrice">£{{ product.price }}</strong>
+                        <span class="text-xs text-bakery-dark/50">(Includes UK packaging &amp; baking)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customization Form -->
+            <form action="{% url 'order_cake' product.id %}" method="POST" enctype="multipart/form-data" class="p-6 sm:p-10 space-y-8" id="cakeOrderForm">
+                {% csrf_token %}
+
+                <!-- SECTION 1: CAKE CUSTOMIZATION -->
+                <div class="space-y-6">
+                    <div class="flex items-center gap-3 border-b border-bakery-peach pb-3">
+                        <span class="w-8 h-8 rounded-full bg-bakery-peach text-bakery-rose flex items-center justify-center font-bold text-sm">1</span>
+                        <h2 class="font-heading text-xl font-bold text-bakery-dark">Customise Your Cake</h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <!-- Cake Size / Servings -->
+                        <div>
+                            <label class="block text-xs font-bold text-bakery-dark uppercase tracking-wider mb-2 flex items-center">
+                                <i class="fa-solid fa-layer-group text-bakery-rose mr-1.5"></i>
+                                <span>Cake Size &amp; Servings <span class="text-bakery-rose">*</span></span>
+                            </label>
+                            <select name="cake_size" id="cakeSizeSelect" class="w-full px-4 py-3 rounded-xl bg-bakery-cream border border-bakery-peach focus:border-bakery-rose outline-none text-sm font-semibold text-bakery-dark transition-all">
+                                <option value="Standard (8-10 Servings)" data-multiplier="1.0" selected>Standard — 6 Inch (8-10 Servings)</option>
+                                <option value="Medium (12-15 Servings)" data-multiplier="1.2">Medium — 8 Inch (12-15 Servings)</option>
+                                <option value="Large (15-20 Servings)" data-multiplier="1.35">Large — 10 Inch (15-20 Servings)</option>
+                                <option value="Tiered Celebration (25+ Servings)" data-multiplier="1.8">2-Tier Celebration (25+ Servings)</option>
+                            </select>
+                            <span class="text-[11px] text-bakery-dark/50 mt-1 block">Choose size according to your party guests.</span>
+                        </div>
+
+                        <!-- Quantity -->
+                        <div>
+                            <label class="block text-xs font-bold text-bakery-dark uppercase tracking-wider mb-2 flex items-center">
+                                <i class="fa-solid fa-calculator text-bakery-rose mr-1.5"></i>
+                                <span>Quantity (Number of Cakes) <span class="text-bakery-rose">*</span></span>
+                            </label>
+                            <input type="number" name="quantity" id="quantityInput" min="1" max="10" value="1" class="w-full px-4 py-3 rounded-xl bg-bakery-cream border border-bakery-peach focus:border-bakery-rose outline-none text-sm font-semibold text-bakery-dark transition-all">
+                            <span class="text-[11px] text-bakery-dark/50 mt-1 block">Order 1 or multiple cakes.</span>
+                        </div>
+
+                        <!-- Sponge Flavour -->
+                        <div>
+                            <label class="block text-xs font-bold text-bakery-dark uppercase tracking-wider mb-2 flex items-center">
+                                <i class="fa-solid fa-wheat-awn text-bakery-rose mr-1.5"></i>
+                                <span>Sponge Flavour <span class="text-bakery-rose">*</span></span>
+                            </label>
+                            <select name="cake_flavour" class="w-full px-4 py-3 rounded-xl bg-bakery-cream border border-bakery-peach focus:border-bakery-rose outline-none text-sm font-semibold text-bakery-dark transition-all">
+                                <option value="Classic Victoria Sponge" selected>Classic Victoria Sponge (Vanilla &amp; Strawberry Jam)</option>
+                                <option value="Zesty Lemon Drizzle">Zesty Lemon Drizzle with Curd</option>
+                                <option value="Rich Belgian Chocolate">Rich Belgian Chocolate Fudge</option>
+                                <option value="Spiced Carrot & Walnut">Spiced Carrot Cake &amp; Cream Cheese</option>
+                                <option value="Red Velvet Indulgence">Red Velvet Indulgence</option>
+                            </select>
+                        </div>
+
+                        <!-- Frosting & Colour Theme -->
+                        <div>
+                            <label class="block text-xs font-bold text-bakery-dark uppercase tracking-wider mb-2 flex items-center">
+                                <i class="fa-solid fa-palette text-bakery-rose mr-1.5"></i>
+                                <span>Frosting &amp; Colour Palette <span class="text-bakery-rose">*</span></span>
+                            </label>
+                            <select name="cake_colour" class="w-full px-4 py-3 rounded-xl bg-bakery-cream border border-bakery-peach focus:border-bakery-rose outline-none text-sm font-semibold text-bakery-dark transition-all">
+                                <option value="Classic Cream & Soft Gold" selected>Classic Cream &amp; Soft Gold Accents</option>
+                                <option value="Pastel Pink & Rose">Pastel Pink &amp; Rose Buttercream</option>
+                                <option value="Soft Sage & Peach">Soft Sage Green &amp; Peach</option>
+                                <option value="Baby Blue & White">Baby Blue &amp; Cloud White</option>
+                                <option value="Rich Dark Chocolate Ganache">Rich Dark Chocolate Ganache</option>
+                                <option value="Custom Floral Theme">Custom Theme (Specify in notes below)</option>
+                            </select>
+                        </div>
+
+                        <!-- Name / Message on Cake -->
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-bakery-dark uppercase tracking-wider mb-2 flex items-center">
+                                <i class="fa-solid fa-pen-nib text-bakery-rose mr-1.5"></i>
+                                <span>Message / Name Inscription on Cake (Optional)</span>
+                            </label>
+                            <input type="text" name="cake_message" placeholder="e.g. Happy 30th Birthday Sarah! ✦" maxlength="100" class="w-full px-4 py-3 rounded-xl bg-bakery-cream border border-bakery-peach focus:border-bakery-rose outline-none text-sm font-semibold text-bakery-dark transition-all">
+                            <span class="text-[11px] text-bakery-dark/50 mt-1 block">Our bakers will hand-pipe this message with artisan lettering on the cake board or surface.</span>
+                        </div>
+
+                        <!-- Reference / Inspiration Image Upload -->
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-bakery-dark uppercase tracking-wider mb-2 flex items-center">
+                                <i class="fa-solid fa-camera text-bakery-rose mr-1.5"></i>
+                                <span>Upload Cake Reference / Design Photo (Optional)</span>
+                            </label>
+                            <div class="p-4 rounded-xl bg-bakery-cream/70 border-2 border-dashed border-bakery-peach hover:border-bakery-rose transition-colors">
+                                <input type="file" name="reference_image" accept="image/*" class="w-full text-xs text-bakery-dark file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-bakery-rose file:text-white hover:file:bg-bakery-rose-dark cursor-pointer">
+                                <p class="text-[11px] text-bakery-dark/60 mt-2 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-image text-bakery-rose/70"></i>
+                                    <span>Have a photo of a cake style, colour theme, or design you love? Upload it here and our bakers will match it!</span>
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- SECTION 2: CUSTOMER CONTACT & DELIVERY -->
+                <div class="space-y-6 pt-4">
+                    <div class="flex items-center gap-3 border-b border-bakery-peach pb-3">
+                        <span class="w-8 h-8 rounded-full bg-bakery-peach text-bakery-rose flex items-center justify-center font-bold text-sm">2</span>
+                        <h2 class="font-heading text-xl font-bold text-bakery-dark">Delivery &amp; Contact Details</h2>
+                    </div>
+
+                    <!-- Email Highlight Notification Banner -->
+                    <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-start gap-3">
+                        <i class="fa-solid fa-bell text-amber-500 text-lg mt-0.5"></i>
+                        <p class="text-xs text-amber-900 leading-relaxed">
+                            <strong>Live Tracking Notice:</strong> Your <strong>Order Tracking ID</strong> and live cake baking updates will be sent to the email address you enter below. No login or password required!
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <!-- Full Name -->
+                        <div>
+                            <label class="block text-xs font-bold text-bakery-dark uppercase tracking-wider mb-2 flex items-center">
+                                <i class="fa-solid fa-user text-bakery-rose mr-1.5"></i>
+                                <span>Full Name <span class="text-bakery-rose">*</span></span>
+                            </label>
+                            <input type="text" name="customer_name" required placeholder="e.g. Eleanor Vance" class="w-full px-4 py-3 rounded-xl bg-bakery-cream border border-bakery-peach focus:border-bakery-rose outline-none text-sm font-semibold text-bakery-dark transition-all">
+                        </div>
+
+                        <!-- Email -->
+                        <div>
+                            <label class="block text-xs font-bold text-bakery-dark uppercase tracking-wider mb-2 flex items-center">
+                                <i class="fa-solid fa-envelope text-bakery-rose mr-1.5"></i>
+                                <span>Email Address <span class="text-bakery-rose">*</span></span>
+                            </label>
+                            <input type="email" name="customer_email" required placeholder="eleanor@example.co.uk" class="w-full px-4 py-3 rounded-xl bg-bakery-cream border border-bakery-peach focus:border-bakery-rose outline-none text-sm font-semibold text-bakery-dark transition-all">
+                        </div>
+
+                        <!-- Phone -->
+                        <div>
+                            <label class="block text-xs font-bold text-bakery-dark uppercase tracking-wider mb-2 flex items-center">
+                                <i class="fa-solid fa-phone text-bakery-rose mr-1.5"></i>
+                                <span>Phone / WhatsApp Number <span class="text-bakery-rose">*</span></span>
+                            </label>
+                            <input type="tel" name="customer_phone" required placeholder="+44 7123 456789" class="w-full px-4 py-3 rounded-xl bg-bakery-cream border border-bakery-peach focus:border-bakery-rose outline-none text-sm font-semibold text-bakery-dark transition-all">
+                        </div>
+
+                        <!-- Preferred Delivery Date -->
+                        <div>
+                            <label class="block text-xs font-bold text-bakery-dark uppercase tracking-wider mb-2 flex items-center">
+                                <i class="fa-solid fa-calendar-days text-bakery-rose mr-1.5"></i>
+                                <span>Preferred Delivery Date (Optional)</span>
+                            </label>
+                            <input type="date" name="preferred_delivery_date" class="w-full px-4 py-3 rounded-xl bg-bakery-cream border border-bakery-peach focus:border-bakery-rose outline-none text-sm font-semibold text-bakery-dark transition-all">
+                        </div>
+
+                        <!-- Delivery Address -->
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-bakery-dark uppercase tracking-wider mb-2 flex items-center">
+                                <i class="fa-solid fa-location-dot text-bakery-rose mr-1.5"></i>
+                                <span>UK Delivery Address &amp; Postcode <span class="text-bakery-rose">*</span></span>
+                            </label>
+                            <textarea name="delivery_address" required rows="2" placeholder="Street Address, City, Postal Code (e.g. 10 Downing Street, London, SW1A 2AA)" class="w-full px-4 py-3 rounded-xl bg-bakery-cream border border-bakery-peach focus:border-bakery-rose outline-none text-sm font-semibold text-bakery-dark transition-all"></textarea>
+                        </div>
+
+                        <!-- Dietary / Allergies -->
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-bakery-dark uppercase tracking-wider mb-2 flex items-center">
+                                <i class="fa-solid fa-notes-medical text-bakery-rose mr-1.5"></i>
+                                <span>Allergens, Dietary Notes or Bespoke Instructions (Optional)</span>
+                            </label>
+                            <input type="text" name="dietary_notes" placeholder="e.g. Nut-free kitchen, eggless, halal-friendly, gate access code..." class="w-full px-4 py-3 rounded-xl bg-bakery-cream border border-bakery-peach focus:border-bakery-rose outline-none text-sm font-semibold text-bakery-dark transition-all">
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- SECTION 3: PAYMENT METHOD & SUBMIT -->
+                <div class="space-y-6 pt-4">
+                    <div class="flex items-center gap-3 border-b border-bakery-peach pb-3">
+                        <span class="w-8 h-8 rounded-full bg-bakery-peach text-bakery-rose flex items-center justify-center font-bold text-sm">3</span>
+                        <h2 class="font-heading text-xl font-bold text-bakery-dark">Payment Options</h2>
+                    </div>
+
+                    <!-- Payment Method Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        
+                        <!-- Option 1: Payment on Delivery (DEFAULT) -->
+                        <label id="cardCOD" class="relative flex items-start gap-3.5 p-4 sm:p-5 rounded-2xl border-2 border-bakery-rose bg-white shadow-sm cursor-pointer transition-all hover:border-bakery-rose">
+                            <input type="radio" name="payment_method" value="COD" checked class="mt-1 w-4 h-4 text-bakery-rose focus:ring-bakery-rose accent-bakery-rose" onchange="switchPaymentMethod('COD')">
+                            <div class="space-y-0.5">
+                                <span class="font-bold text-sm text-bakery-dark flex items-center gap-2">
+                                    <i class="fa-solid fa-money-bill-wave text-emerald-600 text-base"></i>
+                                    <span>Payment on Delivery</span>
+                                </span>
+                                <p class="text-xs text-bakery-dark/70 leading-relaxed">
+                                    Pay cash or card when your cake arrives at your door.
+                                </p>
+                            </div>
+                            <span class="absolute top-3 right-3 text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+                                <i class="fa-solid fa-circle-check text-amber-600 text-[9px]"></i> Default
+                            </span>
+                        </label>
+
+                        <!-- Option 2: Pay Online with Card (Stripe) -->
+                        <label id="cardStripe" class="relative flex items-start gap-3.5 p-4 sm:p-5 rounded-2xl border-2 border-bakery-peach bg-white shadow-sm cursor-pointer transition-all hover:border-bakery-rose">
+                            <input type="radio" name="payment_method" value="STRIPE" class="mt-1 w-4 h-4 text-bakery-rose focus:ring-bakery-rose accent-bakery-rose" onchange="switchPaymentMethod('STRIPE')">
+                            <div class="space-y-0.5">
+                                <span class="font-bold text-sm text-bakery-dark flex items-center gap-2">
+                                    <i class="fa-solid fa-credit-card text-indigo-600 text-base"></i>
+                                    <span>Pay Online (Card / Stripe)</span>
+                                </span>
+                                <p class="text-xs text-bakery-dark/70 leading-relaxed">
+                                    Instant secure card payment via Stripe checkout.
+                                </p>
+                            </div>
+                        </label>
+
+                    </div>
+                </div>
+
+                <!-- SECTION 4: ORDER TOTAL & SUBMIT -->
+                <div class="p-6 rounded-2xl bg-bakery-cream border border-bakery-peach space-y-4">
+                    <div class="flex items-center justify-between text-base">
+                        <span class="text-bakery-dark/80 font-bold">Total Payable:</span>
+                        <div class="text-right">
+                            <span class="font-heading text-3xl font-bold text-bakery-dark" id="displayTotal">£{{ product.price }}</span>
+                            <span class="text-xs text-bakery-dark/60 block" id="paymentNotice">Payment will be collected upon delivery</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="w-full py-4 rounded-xl bg-bakery-rose hover:bg-bakery-rose-dark text-white font-bold text-sm tracking-wider uppercase shadow-xl hover:shadow-2xl transition-all flex items-center justify-center gap-3 group">
+                        <i class="fa-solid fa-check text-sm" id="btnIcon"></i>
+                        <span id="btnText">Confirm Order (Pay on Delivery)</span>
+                        <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
+                    </button>
+
+                    <div class="flex items-center justify-center gap-4 text-xs text-bakery-dark/60 pt-2 flex-wrap">
+                        <span><i class="fa-solid fa-shield-halved text-emerald-600 mr-1"></i> Genuine Fresh Guarantee</span>
+                        <span><i class="fa-solid fa-envelope text-bakery-rose mr-1"></i> Instant Email with Tracking ID</span>
+                        <span><i class="fa-solid fa-cake-candles text-bakery-gold mr-1"></i> 100% Handcrafted to Order</span>
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- Dynamic Price calculation JS -->
+<script>
+    const basePrice = {{ product.price }};
+    const sizeSelect = document.getElementById('cakeSizeSelect');
+    const qtyInput = document.getElementById('quantityInput');
+    const displayTotal = document.getElementById('displayTotal');
+
+    function updateTotal() {
+        const selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
+        const multiplier = parseFloat(selectedOption.getAttribute('data-multiplier') || '1.0');
+        const qty = parseInt(qtyInput.value) || 1;
+        const total = (basePrice * multiplier * qty).toFixed(2);
+        displayTotal.innerText = `£${total}`;
+    }
+
+    sizeSelect.addEventListener('change', updateTotal);
+    qtyInput.addEventListener('input', updateTotal);
+
+    function switchPaymentMethod(method) {
+        const cardCOD = document.getElementById('cardCOD');
+        const cardStripe = document.getElementById('cardStripe');
+        const btnText = document.getElementById('btnText');
+        const btnIcon = document.getElementById('btnIcon');
+        const paymentNotice = document.getElementById('paymentNotice');
+
+        if (method === 'COD') {
+            cardCOD.classList.add('border-bakery-rose');
+            cardCOD.classList.remove('border-bakery-peach');
+            cardStripe.classList.remove('border-bakery-rose');
+            cardStripe.classList.add('border-bakery-peach');
+            btnText.innerText = 'Confirm Order (Pay on Delivery)';
+            btnIcon.className = 'fa-solid fa-check text-sm';
+            paymentNotice.innerText = 'Payment will be collected upon delivery';
+        } else {
+            cardStripe.classList.add('border-bakery-rose');
+            cardStripe.classList.remove('border-bakery-peach');
+            cardCOD.classList.remove('border-bakery-rose');
+            cardCOD.classList.add('border-bakery-peach');
+            btnText.innerText = 'Proceed to Secure Stripe Payment';
+            btnIcon.className = 'fa-solid fa-lock text-sm';
+            paymentNotice.innerText = 'Instant secure card checkout via Stripe';
+        }
+    }
+</script>
+{% endblock %}
+

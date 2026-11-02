@@ -1,0 +1,39 @@
+{% extends 'bakery/base.html' %}
+{% load static %}
+
+{% block title %}Payment Cancelled — Twinklebell Confectionaries{% endblock %}
+
+{% block content %}
+<div class="py-24 bg-gradient-to-b from-bakery-peach/30 via-bakery-cream to-white min-h-[75vh] flex items-center justify-center">
+    <div class="max-w-md mx-auto px-4 sm:px-6 w-full text-center">
+        
+        <div class="bg-white rounded-3xl p-8 sm:p-10 shadow-xl border border-bakery-peach space-y-6">
+            
+            <div class="w-16 h-16 rounded-full bg-amber-100 text-amber-600 mx-auto flex items-center justify-center text-2xl">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div>
+                <span class="font-accent text-xs font-bold tracking-widest uppercase text-amber-600 block mb-1">Payment Incomplete</span>
+                <h1 class="font-heading text-3xl font-bold text-bakery-dark">
+                    Payment was Cancelled
+                </h1>
+                <p class="text-sm text-bakery-dark/70 mt-2">
+                    No charges were made to your card. If you experienced any issue during checkout, you can try again or place your order directly with our team on WhatsApp.
+                </p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                <a href="/#products" class="w-full sm:w-auto px-6 py-3 rounded-full bg-bakery-rose hover:bg-bakery-rose-dark text-white font-bold text-xs uppercase tracking-wider shadow-md transition-all">
+                    Try Again
+                </a>
+                <a href="https://wa.me/447376096263" target="_blank" class="w-full sm:w-auto px-6 py-3 rounded-full bg-[#25D366] text-white font-bold text-xs uppercase tracking-wider shadow-md transition-all flex items-center justify-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-sm"></i> Order via WhatsApp
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+

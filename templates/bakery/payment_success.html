@@ -1,0 +1,114 @@
+{% extends 'bakery/base.html' %}
+{% load static %}
+
+{% block title %}Payment Successful — Twinklebell Confectionaries{% endblock %}
+
+{% block content %}
+<div class="py-24 bg-gradient-to-b from-bakery-peach/40 via-bakery-cream to-white min-h-[75vh] flex items-center justify-center">
+    <div class="max-w-xl mx-auto px-4 sm:px-6 w-full">
+        
+        <div class="bg-white rounded-3xl p-8 sm:p-12 shadow-2xl border border-bakery-rose/20 text-center space-y-6">
+            
+            <!-- Confetti / Success Icon -->
+            <div class="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center text-3xl shadow-inner animate-bounce">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+
+            <div>
+                <span class="font-accent text-xs font-bold tracking-widest uppercase {% if order and order.payment_method == 'COD' %}text-amber-600{% else %}text-emerald-600{% endif %} block mb-1">
+                    {% if order and order.payment_method == 'COD' %}
+                        💵 Order Confirmed — Payment on Delivery
+                    {% else %}
+                        💳 Payment Confirmed via Stripe
+                    {% endif %}
+                </span>
+                <h1 class="font-heading text-3xl sm:text-4xl font-bold text-bakery-dark">
+                    {% if order and order.payment_method == 'COD' %}
+                        Your Cake Order is Confirmed!
+                    {% else %}
+                        Thank You for Your Order!
+                    {% endif %}
+                </h1>
+                <p class="text-sm text-bakery-dark/70 mt-2">
+                    {% if order and order.payment_method == 'COD' %}
+                        We've received your order and scheduled baking in our London kitchen. You will pay <strong>£{{ order.total_amount }}</strong> upon delivery.
+                    {% else %}
+                        Your payment was successfully processed. Our bakers in London are already preparing your handmade bake!
+                    {% endif %}
+                </p>
+            </div>
+
+            <!-- Order Details Card -->
+            {% if order %}
+            <div class="bg-bakery-cream rounded-2xl p-6 text-left space-y-3 border border-bakery-peach/70 text-sm">
+                <div class="flex justify-between items-center pb-3 border-b border-bakery-peach">
+                    <span class="text-bakery-dark/60 font-semibold">Order Tracking ID:</span>
+                    <strong class="font-mono text-bakery-rose bg-bakery-peach/70 px-3 py-1 rounded-lg text-base">{{ order.tracking_id }}</strong>
+                </div>
+
+                <div class="flex justify-between items-center pb-2 border-b border-bakery-peach/50">
+                    <span class="text-bakery-dark/60 font-semibold">Order Reference:</span>
+                    <span class="font-mono text-bakery-dark text-xs">{{ order.order_number }}</span>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <span class="text-bakery-dark/60 font-semibold">Customer:</span>
+                    <span class="text-bakery-dark font-bold">{{ order.customer_name }}</span>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <span class="text-bakery-dark/60 font-semibold">Email:</span>
+                    <span class="text-bakery-dark font-medium">{{ order.customer_email }}</span>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <span class="text-bakery-dark/60 font-semibold">Payment Method:</span>
+                    <span class="px-2.5 py-0.5 rounded-full {% if order.payment_method == 'COD' %}bg-amber-100 text-amber-800{% else %}bg-emerald-100 text-emerald-800{% endif %} text-xs font-bold">
+                        {% if order.payment_method == 'COD' %}💵 Payment on Delivery{% else %}💳 Card (Stripe){% endif %}
+                    </span>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <span class="text-bakery-dark/60 font-semibold">Payment Status:</span>
+                    <span class="px-2.5 py-0.5 rounded-full {% if order.status == 'PAID' %}bg-emerald-100 text-emerald-800{% else %}bg-amber-100 text-amber-800{% endif %} text-xs font-bold">
+                        {% if order.payment_method == 'COD' and order.status == 'PENDING' %}Pay on Delivery{% else %}{{ order.get_status_display }}{% endif %}
+                    </span>
+                </div>
+
+                <div class="flex justify-between items-center pt-3 border-t border-bakery-peach">
+                    <span class="text-bakery-dark font-bold text-base">
+                        {% if order.payment_method == 'COD' and order.status != 'PAID' %}Total to Pay on Delivery:{% else %}Total Paid:{% endif %}
+                    </span>
+                    <strong class="font-heading text-xl text-bakery-dark">£{{ order.total_amount }}</strong>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="p-4 rounded-xl bg-bakery-peach/50 text-xs text-bakery-dark/80 text-left flex items-start gap-3">
+                <i class="fa-solid fa-bell text-bakery-rose text-base mt-0.5"></i>
+                <p>
+                    Your <strong>Order Tracking ID</strong> has also been sent to <strong>{{ order.customer_email }}</strong>. You can check your cake's live baking progress at any time!
+                </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                {% if order %}
+                <a href="{% url 'track_order' %}?tracking_id={{ order.tracking_id }}" class="w-full sm:w-auto px-6 py-3.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-cake-candles"></i> Track Cake Live
+                </a>
+                {% endif %}
+                <a href="{% url 'index' %}" class="w-full sm:w-auto px-6 py-3.5 rounded-full bg-bakery-rose hover:bg-bakery-rose-dark text-white font-bold text-xs uppercase tracking-wider shadow-md transition-all">
+                    Return to Home
+                </a>
+                <a href="https://wa.me/447376096263?text=Hi%20Twinklebell,%20I've%20just%20completed%20order%20{% if order %}{{ order.tracking_id }}{% endif %}" target="_blank" class="w-full sm:w-auto px-6 py-3.5 rounded-full bg-[#25D366] text-white font-bold text-xs uppercase tracking-wider shadow-md transition-all flex items-center justify-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp Support
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+

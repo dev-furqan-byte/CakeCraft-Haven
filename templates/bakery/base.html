@@ -1,0 +1,274 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Twinklebell Confectionaries — Premium Handcrafted Cakes, London{% endblock %}</title>
+    
+    <!-- Meta tags -->
+    <meta name="description" content="Handcrafted celebration cakes, cupcakes, and subscription cake boxes made with love in London. Order bespoke cakes for birthdays, weddings & special occasions.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bakery-peach': '#FAE3DC',
+                        'bakery-cream': '#FDF9F5',
+                        'bakery-dark': '#2B211E',
+                        'bakery-rose': '#E88B84',
+                        'bakery-rose-dark': '#D46A62',
+                        'bakery-gold': '#D99B26',
+                        'bakery-teal': '#286860',
+                    },
+                    fontFamily: {
+                        heading: ['Playfair Display', 'serif'],
+                        body: ['Nunito', 'sans-serif'],
+                        accent: ['Fredoka', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        .font-heading { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Nunito', sans-serif; }
+        .font-accent { font-family: 'Fredoka', sans-serif; }
+        
+        @keyframes marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            display: flex;
+            width: 200%;
+            animation: marquee 28s linear infinite;
+        }
+        .animate-marquee:hover {
+            animation-play-state: paused;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="font-body bg-bakery-cream text-bakery-dark antialiased selection:bg-bakery-rose selection:text-white">
+
+    <!-- Toast / Django Messages -->
+    {% if messages %}
+    <div class="fixed top-20 right-4 z-50 flex flex-col gap-2 max-w-md">
+        {% for message in messages %}
+        <div class="px-5 py-4 rounded-xl shadow-xl flex items-center justify-between gap-3 text-sm font-semibold transition-all {% if message.tags == 'error' %}bg-red-500 text-white{% else %}bg-bakery-teal text-white{% endif %}">
+            <span>{{ message }}</span>
+            <button onclick="this.parentElement.remove()" class="text-white/80 hover:text-white text-lg">&times;</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-40 bg-bakery-cream/95 backdrop-blur-md border-b border-bakery-rose/20 transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Logo -->
+            <a href="{% url 'index' %}" class="flex items-center gap-3 group">
+                <img src="{% static 'images/logo.png' %}" alt="Twinklebell Confectionaries" class="h-14 w-auto object-contain transition-transform group-hover:scale-105">
+                <div class="hidden sm:block">
+                    <span class="font-heading font-bold text-xl tracking-tight text-bakery-dark block leading-none">Twinklebell</span>
+                    <span class="font-accent text-xs tracking-widest uppercase text-bakery-rose block mt-1">Confectionaries · London</span>
+                </div>
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center gap-5 lg:gap-6">
+                <a href="{% url 'make_your_own_cake' %}" class="text-xs font-bold uppercase tracking-wider text-purple-700 bg-purple-50 hover:bg-purple-100 px-3.5 py-1.5 rounded-full border border-purple-200 transition-all flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-wand-magic-sparkles text-purple-600"></i> Make Your Own Cake
+                </a>
+                <a href="/#products" class="text-xs font-bold uppercase tracking-wider text-bakery-dark/80 hover:text-bakery-rose transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-cake-candles text-bakery-rose text-xs"></i> Our Cakes
+                </a>
+                <a href="/#about" class="text-xs font-bold uppercase tracking-wider text-bakery-dark/80 hover:text-bakery-rose transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-book-open text-xs text-amber-700"></i> About
+                </a>
+                <a href="/#moments" class="text-xs font-bold uppercase tracking-wider text-bakery-rose hover:text-bakery-rose-dark transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-gift text-xs"></i> Moments
+                </a>
+                <a href="{% url 'track_order' %}" class="text-xs font-bold uppercase tracking-wider text-bakery-teal hover:text-bakery-dark transition-colors flex items-center gap-1.5 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200">
+                    <i class="fa-solid fa-location-crosshairs text-emerald-600"></i> Track Order
+                </a>
+            </nav>
+
+            <!-- Actions / WhatsApp CTA -->
+            <div class="flex items-center gap-3">
+                <a href="{% url 'track_order' %}" class="hidden lg:inline-flex items-center gap-1.5 text-xs font-bold text-bakery-dark/70 hover:text-bakery-rose px-2.5 py-1.5">
+                    <i class="fa-solid fa-magnifying-glass text-xs"></i> Tracking
+                </a>
+                <a href="https://wa.me/447376096263" target="_blank" rel="noopener noreferrer" class="hidden sm:inline-flex items-center gap-1.5 bg-[#25D366] hover:bg-[#20ba59] text-white px-3.5 py-2 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm transition-all">
+                    <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp
+                </a>
+                <a href="/#products" class="inline-flex items-center gap-2 bg-bakery-rose hover:bg-bakery-rose-dark text-white px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider shadow-md hover:shadow-lg transition-all">
+                    <i class="fa-solid fa-bag-shopping"></i> Order Online
+                </a>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="md:hidden text-bakery-dark text-2xl p-2 focus:outline-none">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white/95 backdrop-blur-md border-b border-bakery-rose/20 px-5 py-4 flex flex-col gap-2.5 text-left shadow-lg">
+            <a href="{% url 'make_your_own_cake' %}" class="mobile-link text-sm font-bold py-2.5 px-4 text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-xl flex items-center gap-2.5 transition-colors">
+                <i class="fa-solid fa-wand-magic-sparkles text-purple-600"></i>
+                <span>✨ Make Your Own Cake (3D Studio)</span>
+            </a>
+            <a href="{% url 'track_order' %}" class="mobile-link text-sm font-bold py-2.5 px-4 text-bakery-teal bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl flex items-center gap-2.5 transition-colors">
+                <i class="fa-solid fa-location-crosshairs text-emerald-600"></i>
+                <span>Track Your Cake Live</span>
+            </a>
+            <a href="/#products" class="mobile-link text-sm font-bold py-2 px-4 text-slate-800 hover:text-bakery-rose flex items-center gap-2.5">
+                <i class="fa-solid fa-cake-candles text-bakery-rose"></i>
+                <span>Artisan Cakes Range</span>
+            </a>
+            <a href="/#about" class="mobile-link text-sm font-bold py-2 px-4 text-slate-800 hover:text-bakery-rose flex items-center gap-2.5">
+                <i class="fa-solid fa-book-open text-amber-700"></i>
+                <span>Our Heritage &amp; Kitchen</span>
+            </a>
+            <a href="/#moments" class="mobile-link text-sm font-bold py-2 px-4 text-slate-800 hover:text-bakery-rose flex items-center gap-2.5">
+                <i class="fa-solid fa-gift text-pink-600"></i>
+                <span>Moments Cake Subscriptions</span>
+            </a>
+            <a href="/#gallery" class="mobile-link text-sm font-bold py-2 px-4 text-slate-800 hover:text-bakery-rose flex items-center gap-2.5">
+                <i class="fa-solid fa-images text-blue-600"></i>
+                <span>Bakery Gallery</span>
+            </a>
+            <div class="pt-2 border-t border-slate-100 flex flex-col gap-2">
+                <a href="https://wa.me/447376096263" target="_blank" class="w-full bg-[#25D366] text-white py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-sm">
+                    <i class="fa-brands fa-whatsapp text-base"></i>
+                    <span>Chat on WhatsApp</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer id="contact" class="bg-bakery-dark text-bakery-cream pt-16 pb-10 border-t border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/10">
+                
+                <!-- Brand Info -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-3">
+                        <img src="{% static 'images/logo.png' %}" alt="Twinklebell" class="h-12 w-auto bg-white/10 rounded-full p-1">
+                        <span class="font-heading font-bold text-xl text-white">Twinklebell</span>
+                    </div>
+                    <p class="text-sm text-bakery-cream/70 leading-relaxed">
+                        British sponge cake specialists, baking handcrafted cakes to order from London since day one. Shipped fresh across the UK.
+                    </p>
+                    <div class="flex items-center gap-3 pt-2">
+                        <a href="https://instagram.com/twinklebellconfectionaries" target="_blank" class="w-9 h-9 rounded-full bg-white/10 hover:bg-bakery-rose flex items-center justify-center text-white transition-colors">
+                            <i class="fa-brands fa-instagram"></i>
+                        </a>
+                        <a href="https://tiktok.com/@twinklebell.sponge" target="_blank" class="w-9 h-9 rounded-full bg-white/10 hover:bg-bakery-rose flex items-center justify-center text-white transition-colors">
+                            <i class="fa-brands fa-tiktok"></i>
+                        </a>
+                        <a href="https://wa.me/447376096263" target="_blank" class="w-9 h-9 rounded-full bg-white/10 hover:bg-[#25D366] flex items-center justify-center text-white transition-colors">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="font-heading text-lg font-bold text-white mb-4">Navigation</h4>
+                    <ul class="space-y-2 text-sm text-bakery-cream/75">
+                        <li><a href="{% url 'track_order' %}" class="text-bakery-teal-light font-bold text-emerald-400 hover:text-white transition-colors"><i class="fa-solid fa-location-crosshairs text-xs mr-1"></i> Track Your Cake</a></li>
+                        <li><a href="/#about" class="hover:text-bakery-rose transition-colors">Our Story & Heritage</a></li>
+                        <li><a href="/#products" class="hover:text-bakery-rose transition-colors">Artisan British Cakes</a></li>
+                        <li><a href="/#moments" class="hover:text-bakery-rose transition-colors">Moments Subscription</a></li>
+                        <li><a href="/#gallery" class="hover:text-bakery-rose transition-colors">Bakery Gallery</a></li>
+                        <li><a href="{% url 'bakery_admin_dashboard' %}" class="text-bakery-rose/90 hover:text-white transition-colors font-semibold"><i class="fa-solid fa-lock text-xs mr-1"></i> Bakery Owner Dashboard</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div>
+                    <h4 class="font-heading text-lg font-bold text-white mb-4">Get in Touch</h4>
+                    <ul class="space-y-3 text-sm text-bakery-cream/75">
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-location-dot text-bakery-rose mt-1"></i>
+                            <span>32d Grosvenor Road, Westcliff-on-Sea, SS0 8EN, United Kingdom</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fa-solid fa-phone text-bakery-rose"></i>
+                            <a href="tel:+447376096263" class="hover:text-white transition-colors">+44 7376 096263</a>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fa-solid fa-envelope text-bakery-rose"></i>
+                            <a href="mailto:hello@twinklebellconfectionaries.co.uk" class="hover:text-white transition-colors">hello@twinklebellconfectionaries.co.uk</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Secure Payments with Stripe Badge -->
+                <div>
+                    <h4 class="font-heading text-lg font-bold text-white mb-4">Secure Checkout</h4>
+                    <p class="text-sm text-bakery-cream/70 mb-4">
+                        We accept all major credit and debit cards secured by Stripe with end-to-end 256-bit encryption.
+                    </p>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="px-2.5 py-1 bg-white/10 rounded text-xs font-semibold text-white/90"><i class="fa-brands fa-stripe text-lg mr-1 text-[#635BFF]"></i> Stripe</span>
+                        <span class="px-2.5 py-1 bg-white/10 rounded text-xs font-semibold text-white/90"><i class="fa-brands fa-cc-visa mr-1"></i> Visa</span>
+                        <span class="px-2.5 py-1 bg-white/10 rounded text-xs font-semibold text-white/90"><i class="fa-brands fa-cc-mastercard mr-1"></i> Mastercard</span>
+                        <span class="px-2.5 py-1 bg-white/10 rounded text-xs font-semibold text-white/90"><i class="fa-brands fa-apple-pay mr-1"></i> Apple Pay</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-bakery-cream/50 gap-4">
+                <p>&copy; 2026 Twinklebell Confectionaries. All rights reserved.</p>
+                <p class="flex items-center gap-1">
+                    Powered by <strong class="text-white">Django</strong> &amp; <strong class="text-[#635BFF]">Stripe Payments</strong>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Drawer Script -->
+    <script>
+        const btn = document.getElementById('mobileMenuBtn');
+        const menu = document.getElementById('mobileMenu');
+        if (btn && menu) {
+            btn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+            });
+            document.querySelectorAll('.mobile-link').forEach(link => {
+                link.addEventListener('click', () => menu.classList.add('hidden'));
+            });
+        }
+    </script>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
+
